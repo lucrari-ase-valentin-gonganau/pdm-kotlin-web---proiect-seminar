@@ -3,6 +3,7 @@ import express from "express";
 import cors from "cors";
 import path from "path";
 import crypto from "crypto";
+import fs from "fs";
 import { attachWebSocket, isLastClientConnected, sendToLastClient } from "./ws.js";
 import { generateQRCodeUrlForWS, } from "./utils.js";
 import { getPendingMessages } from "./service.js";
@@ -25,9 +26,11 @@ app.set("views", path.join(process.cwd(), "src", "views"));
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(process.cwd(), "public")));
 
 app.get("/", (_req, res) => {
-  res.render("index");
+  const apkExists = fs.existsSync(path.join(process.cwd(), "public", "app.apk"));
+  res.render("index", { apkExists });
 });
 
 app.get("/qr-code", (_req, res) => {
@@ -42,6 +45,11 @@ app.get("/send-sms", (_req, res) => {
 
 app.post("/send-sms", requireBearer, (req, res) => {
   const { phone, message } = req.body as { phone: string; message: string };
+  const normalized = phone?.startsWith("+4") ? phone.slice(2) : phone;
+  if (!normalized || !/^07\d{8}$/.test(normalized)) {
+    res.status(400).json({ error: "Invalid phone number" });
+    return;
+  }
   const sent = sendToLastClient(phone, message);
   res.json({ ok: true, sent });
 });

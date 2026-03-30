@@ -42,6 +42,9 @@
     <nav>
       <a href="/qr-code">QR Code</a>
       <a href="/send-sms">Send SMS</a>
+      <% if (apkExists) { %>
+      <a href="/app.apk" download>Descarcă APK</a>
+      <% } %>
     </nav>
   </body>
 </html>

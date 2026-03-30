@@ -227,6 +227,13 @@
           return;
         }
 
+        const normalized = phone.startsWith("+4") ? phone.slice(2) : phone;
+        if (!/^07\d{8}$/.test(normalized)) {
+          feedback.style.color = "#ef4444";
+          feedback.textContent = "Număr invalid. Format: 07xxxxxxxx sau +407xxxxxxxx.";
+          return;
+        }
+
         const res = await fetch("/send-sms", {
           method: "POST",
           headers: {
