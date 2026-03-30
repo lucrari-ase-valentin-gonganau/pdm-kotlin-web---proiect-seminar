@@ -158,19 +158,19 @@
         <h1>Send SMS</h1>
         <div class="status">
           <div class="dot" id="dot"></div>
-          <span id="statusText">Se verifică...</span>
+          <span id="statusText">Se verifica...</span>
         </div>
       </div>
 
-      <input type="tel" id="phone" placeholder="Număr telefon" />
+      <input type="tel" id="phone" placeholder="Numar telefon" />
       <input type="text" id="message" placeholder="Mesaj" />
       <button id="sendBtn" onclick="sendSms()">Trimite</button>
       <div class="feedback" id="feedback"></div>
 
       <div class="pending-section">
-        <h2>În așteptare</h2>
+        <h2>In asteptare</h2>
         <div class="pending-list" id="pendingList">
-          <div class="empty">Nicio comandă în așteptare</div>
+          <div class="empty">Nicio comanda in asteptare</div>
         </div>
       </div>
 
@@ -184,14 +184,14 @@
   <span class="key">"phone"</span>:   <span class="val">"07xxxxxxxx"</span>,
   <span class="key">"message"</span>: <span class="val">"text mesaj"</span>
 }</div>
-        <button class="copy-btn" onclick="copyToken()">Copiază token</button>
+        <button class="copy-btn" onclick="copyToken()">Copiaza token</button>
         <div class="api-block"><span class="method">curl</span> -X POST http://localhost:<%= process.env.PORT %>/send-sms \
   -H <span class="val">"Authorization: Bearer <%= token %>"</span> \
   -H <span class="val">"Content-Type: application/json"</span> \
   -d <span class="val">'{"phone":"0722123456","message":"test"}'</span></div>
       </div>
 
-      <a href="/">← Înapoi</a>
+      <a href="/">← Inapoi</a>
     </div>
 
     <script>
@@ -223,14 +223,14 @@
 
         if (!phone || !message) {
           feedback.style.color = "#ef4444";
-          feedback.textContent = "Completează toate câmpurile.";
+          feedback.textContent = "Completeaza toate campurile.";
           return;
         }
 
         const normalized = phone.startsWith("+4") ? phone.slice(2) : phone;
         if (!/^07\d{8}$/.test(normalized)) {
           feedback.style.color = "#ef4444";
-          feedback.textContent = "Număr invalid. Format: 07xxxxxxxx sau +407xxxxxxxx.";
+          feedback.textContent = "Numar invalid. Format: 07xxxxxxxx sau +407xxxxxxxx.";
           return;
         }
 
@@ -259,7 +259,7 @@
         const items = await res.json();
         const list = document.getElementById("pendingList");
         if (!items.length) {
-          list.innerHTML = '<div class="empty">Nicio comandă în așteptare</div>';
+          list.innerHTML = '<div class="empty">Nicio comanda in asteptare</div>';
           return;
         }
         list.innerHTML = items.map(item => `
