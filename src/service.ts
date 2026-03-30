@@ -1,18 +1,13 @@
 import sq from "./sqlite.js";
 
-const newClient = (clientIp: string) => {
+const newClient = (clientIp: string): Promise<{ clientIdSavedInDatabase: number }> => {
   console.log("Client IP:", clientIp);
-
-  // notificam clientul ca s-a conectat, ii generam un id unic pentru client
-  const clientIdSavedInDatabase = Date.now(); // simplu id bazat pe timestamp, in productie ar trebui ceva mai robust
-
-  // salvam in sqlite memory
-  sq.run("INSERT INTO clients (id, ip) VALUES (?, ?)", [
-    clientIdSavedInDatabase,
-    clientIp,
-  ]);
-
-  return { clientIdSavedInDatabase };
+  return new Promise((resolve, reject) => {
+    sq.run("INSERT INTO clients (ip) VALUES (?)", [clientIp], function (err) {
+      if (err) reject(err);
+      else resolve({ clientIdSavedInDatabase: this.lastID });
+    });
+  });
 };
 
 const removeClient = (clientId: number) => {

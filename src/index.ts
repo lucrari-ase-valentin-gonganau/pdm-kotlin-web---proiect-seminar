@@ -2,11 +2,23 @@ import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import path from "path";
+import crypto from "crypto";
 import { attachWebSocket, isLastClientConnected, sendToLastClient } from "./ws.js";
 import { generateQRCodeUrlForWS, } from "./utils.js";
 import { getPendingMessages } from "./service.js";
 
+const API_TOKEN = crypto.randomBytes(32).toString("hex");
+
 const app = express();
+
+function requireBearer(req: express.Request, res: express.Response, next: express.NextFunction) {
+  const auth = req.headers.authorization;
+  if (!auth || auth !== `Bearer ${API_TOKEN}`) {
+    res.status(401).json({ error: "Unauthorized" });
+    return;
+  }
+  next();
+}
 
 app.set("view engine", "ejs");
 app.set("views", path.join(process.cwd(), "src", "views"));
@@ -25,10 +37,10 @@ app.get("/qr-code", (_req, res) => {
 });
 
 app.get("/send-sms", (_req, res) => {
-  res.render("send-sms");
+  res.render("send-sms", { token: API_TOKEN });
 });
 
-app.post("/send-sms", (req, res) => {
+app.post("/send-sms", requireBearer, (req, res) => {
   const { phone, message } = req.body as { phone: string; message: string };
   const sent = sendToLastClient(phone, message);
   res.json({ ok: true, sent });
@@ -45,6 +57,7 @@ app.get("/api/pending-messages", async (_req, res) => {
 
 const server = app.listen(process.env.PORT, () => {
   console.log(`Server is running on port ${process.env.PORT}`);
+  console.log(`API Token: ${API_TOKEN}`);
 });
 
 attachWebSocket(server);

@@ -4,7 +4,7 @@ const sq = new sqlite3.Database(":memory:");
 
 sq.run(`
   CREATE TABLE clients (
-    id INTEGER PRIMARY KEY,
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
     ip TEXT
   )
 `);
