@@ -9,4 +9,4 @@ services:
       PORT: 3000
       WS_QR_CODE: ${WS_QR_CODE}
     env_file:
-      - .env
+      - .env.prod
