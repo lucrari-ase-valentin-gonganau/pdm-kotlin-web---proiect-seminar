@@ -4,15 +4,23 @@ import cors from "cors";
 import path from "path";
 import crypto from "crypto";
 import fs from "fs";
-import { attachWebSocket, isLastClientConnected, sendToLastClient } from "./ws.js";
-import { generateQRCodeUrlForWS, } from "./utils.js";
+import {
+  attachWebSocket,
+  isLastClientConnected,
+  sendToLastClient,
+} from "./ws.js";
+import { generateQRCodeUrlForWS } from "./utils.js";
 import { getPendingMessages } from "./service.js";
 
 const API_TOKEN = crypto.randomBytes(32).toString("hex");
 
 const app = express();
 
-function requireBearer(req: express.Request, res: express.Response, next: express.NextFunction) {
+function requireBearer(
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+) {
   const auth = req.headers.authorization;
   if (!auth || auth !== `Bearer ${API_TOKEN}`) {
     res.status(401).json({ error: "Unauthorized" });
@@ -29,7 +37,9 @@ app.use(express.json());
 app.use(express.static(path.join(process.cwd(), "public")));
 
 app.get("/", (_req, res) => {
-  const apkExists = fs.existsSync(path.join(process.cwd(), "public", "app.apk"));
+  const apkExists = fs.existsSync(
+    path.join(process.cwd(), "public", "app.apk"),
+  );
   res.render("index", { apkExists });
 });
 
@@ -40,7 +50,7 @@ app.get("/qr-code", (_req, res) => {
 });
 
 app.get("/send-sms", (_req, res) => {
-  res.render("send-sms", { token: API_TOKEN });
+  res.render("send-sms", { token: API_TOKEN, host: process.env.HOST });
 });
 
 app.post("/send-sms", requireBearer, (req, res) => {

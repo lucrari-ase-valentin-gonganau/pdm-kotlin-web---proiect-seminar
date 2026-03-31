@@ -185,7 +185,7 @@
   <span class="key">"message"</span>: <span class="val">"text mesaj"</span>
 }</div>
         <button class="copy-btn" onclick="copyToken()">Copiaza token</button>
-        <div class="api-block"><span class="method">curl</span> -X POST http://localhost:<%= process.env.PORT %>/send-sms \
+        <div class="api-block"><span class="method">curl</span> -X POST <%= host %>/send-sms \
   -H <span class="val">"Authorization: Bearer <%= token %>"</span> \
   -H <span class="val">"Content-Type: application/json"</span> \
   -d <span class="val">'{"phone":"0722123456","message":"test"}'</span></div>
