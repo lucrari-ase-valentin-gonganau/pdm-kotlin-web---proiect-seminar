@@ -5,8 +5,5 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-    environment:
-      PORT: 3000
-      WS_QR_CODE: ${WS_QR_CODE}
     env_file:
       - .env.prod
